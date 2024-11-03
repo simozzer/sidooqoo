@@ -80,6 +80,16 @@ qx.Class.define("sidooqoo.PuzzleCellControl",{
         },    
         getSuggested(bSuggested) {
             this._valueState = bSuggested ? sidooqoo.PuzzleCellControl.cellValueStates.SUGGESTED : undefined;
+        },
+        
+        reset(bFast) {
+            this.setValue('');
+            this._valueState = sidooqoo.PuzzleCellControl.cellValueStates.EMPTY;
+            if (!bFast) {
+                this.element.innerHTML = '';
+                this.element.classList.remove('suggested');
+                this.element.classList.remove('solved');
+            }
         }
         
     },

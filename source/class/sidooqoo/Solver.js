@@ -194,11 +194,11 @@ qx.Class.define("sidooqoo.Solver",{
             })
             oLastUpdatedCell.choiceIndex++;
             oLastUpdatedCell.reset(this._fast);
-            const oPuzzleQueries = this._puzzleQueries._aCells;
+            const oPuzzleQueries = this._puzzleQueries;
             if (!oPuzzleQueries.canSetACellValue(oLastUpdatedCell)) {
                 oLastUpdatedCell.choiceIndex = 0;
                 const oPrevCell = this._stack[this._stack.length - 1];
-                this._puzzleQueries._aCells.forEach(o => {
+                oPuzzleQueries._aCells.forEach(o => {
                     if (o.getPassIndex() === oPrevCell.getPassIndex()) {
                         o.reset(this._fast);
                     }
@@ -228,12 +228,10 @@ qx.Class.define("sidooqoo.Solver",{
             const aPossibleCellValues = queries.getPossibleValues(oSolveCell);
             const iLen = aPossibleCellValues.length;
             if (oSolveCell.getChoiceIndex() < iLen && queries.canSetACellValue(oSolveCell)) {
-                debugger;
                 oSolveCell.setValue(''+ aPossibleCellValues[oSolveCell.getChoiceIndex()]);
                 oSolveCell.suggested = true;
                 oSolveCell.setPassIndex(this.getPassIndex());
                 if (!this._fast) {
-                    debugger
                     oSolveCell.element.innerHTML = oSolveCell.getValue() + "";
                     oSolveCell.element.classList.add('suggested');
                 }
@@ -283,7 +281,6 @@ qx.Class.define("sidooqoo.Solver",{
         }
         },
         construct(oPuzzleQueries, fnComplete) {
-            debugger;
             this._puzzleQueries = oPuzzleQueries;
             this._fast = true,
             this._cells = this._puzzleQueries._aCells;
