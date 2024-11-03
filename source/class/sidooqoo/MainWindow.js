@@ -32,31 +32,15 @@ qx.Class.define("sidooqoo.MainWindow",{
         this.setLayout(layout);
         this.setContentPadding(5);
 
-        this._puzzleCells = {
-            cells: [],
-            cellsInRow(iRow){
-                let items = [];
-                for (iCellIndex = iRow *3; iCellIndex < iRow *3 + 9; iCellIndex ++) {
-                    items.push(this.cells[iCellIndex]);
-                }
-                return items;
-            },
-            cellsInColumn(iCol) {
-                let items = [];
-                for (iRow = 0; iRow < 9; iRow++) {
-                    items.push(this.cells[(iRow * 3) + iCol]);
-                }
-                return items;                
-            }
-        };
+        this._puzzleCells = [];   
+        this._puzzleQueries = new sidooqoo.PuzzleQueries(this._puzzleCells); 
         
 
+        let iCellIndex = 0;
         for (let row = 0; row < 9; row++) {
-            for(let col=0; col< 9; col++) {
-                var textField = new sidooqoo.PuzzleCell();  
-                textField.setPuzzleManager(this._puzzleCells)        
-                textField.setDataCol(col);
-                textField.setDataRow(row);
+            for(let col=0; col< 9; col++) {                
+                var textField = new sidooqoo.PuzzleCell();                 
+                textField.setCellIndex(iCellIndex++);
                 if (row % 3 == 0) {
                     textField.setMarginTop(20);
                 } else {
@@ -71,10 +55,15 @@ qx.Class.define("sidooqoo.MainWindow",{
    
                 this.add(textField, {column: col, row: row});
 
-                this._puzzleCells.cells.push(textField);
-            }            
+                this._puzzleCells.push(textField);
+            }                        
         }
 
-        
+        // give every puzzle cell (which is a customised text field) a refernece to the class to manage puzzle queries
+        for (let i=0; i < this._puzzleCells.length;i++) {
+            this._puzzleCells[i].setPuzzleQueries(this._puzzleQueries);
+        }
+
+          
     }
 });      
