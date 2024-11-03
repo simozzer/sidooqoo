@@ -4,11 +4,22 @@
  *
  * @asset(sidooqoo/*)
  */
-qx.Class.define("sidooqoo.PuzzleCell",{
+qx.Class.define("sidooqoo.PuzzleCellControl",{
     extend: qx.ui.form.TextField,
+    statics: {
+        cellValueStates: {
+            EMPTY: 0,
+            FIXED: 1,
+            ENTERED: 2,
+            SUGGESTED: 4,
+            SOLVED: 8
+        }
+    },
     properties: {
         cellIndex : { check : "Number" },        
-        puzzleQueries: {}
+        puzzleQueries: {},
+        _valueState: { check: "Number" }
+        
        
     },
     members: {
@@ -22,7 +33,55 @@ qx.Class.define("sidooqoo.PuzzleCell",{
             let innerCellRow = 0 | this.getDataRow() / 3;
             let innerCellColumn = 0 | this.getDataCol() / 3;
             return (innerCellRow *3) + innerCellColumn;
+        },
+        _getValueState() {
+            return this._valueState;
+        },
+        _setValueState(state) {
+            this._valueState = state;
+        },
+        setFixed(fixed) {
+            if (fixed) {
+                this._valueState = sidooqoo.PuzzleCellControl.cellValueStates.FIXED;
+            } else {
+                this._valueState = this._valueState &! sidooqoo.PuzzleCellControl.cellValueStates.FIXED;
+            }
+        },
+        getPassIndex() {
+            return this._passIndex;
+        },
+        setPassIndex(iPassIndex) {
+            this._passIndex = iPassIndex;
+        },
+        getChoiceIndex() {
+            return this._choiceIndex;
+        },
+        setChoiceIndex(iChoiceIndex) {
+            this._choiceIndex = iChoiceIndex;
+        },    
+        getEntered() {
+            return this._valueState === sidooqoo.PuzzleCellControl.cellValueStates.ENTERED;
+        },    
+        setEntered(bEntered) {
+            if (bEntered) {
+                this._valueState = sidooqoo.PuzzleCellControl.cellValueStates.ENTERED;
+            } else if ([sidooqoo.PuzzleCellControl.cellValueStates.SOLVED, sidooqoo.PuzzleCellControl.cellValueStates.FIXED].indexOf(this._valueState) < 0) {
+                this._valueState = sidooqoo.PuzzleCellControl.cellValueStates.EMPTY;
+            }
+        },    
+        getSolved() {
+            return this._valueState === sidooqoo.PuzzleCellControl.cellValueStates.SOLVED;
+        },    
+        setSolved() {
+            this._valueState = sidooqoo.PuzzleCellControl.cellValueStates.SOLVED;
+        },    
+        getSuggested() {
+            return this._valueState === sidooqoo.PuzzleCellControl.cellValueStates.SUGGESTED;
+        },    
+        getSuggested(bSuggested) {
+            this._valueState = bSuggested ? sidooqoo.PuzzleCellControl.cellValueStates.SUGGESTED : undefined;
         }
+        
     },
     construct() {
         super();
@@ -31,7 +90,10 @@ qx.Class.define("sidooqoo.PuzzleCell",{
         this.setMaxWidth(20);
         this.setMaxHeight(20);
         this.setMarginLeft(5);
-        this.setMarginTop(5);    
+        this.setMarginTop(5);  
+        this.setChoiceIndex(0);
+        this._valueState = sidooqoo.PuzzleCellControl.cellValueStates.EMPTY; 
+
         
         this.addListener("keydown", (oEv) => {
 
@@ -95,8 +157,8 @@ qx.Class.define("sidooqoo.PuzzleCell",{
         this.addListener("keypress", oEv => {
            
             let puzzleQueries = this.getPuzzleQueries();
-            if (puzzleQueries.canSetCellValue(this,oEv.keyNumericValue)) {
-                this.setValue(oEv.keyNumericValue.toString());
+            if (puzzleQueries.canSetCellValue(this,oEv.getKeyIdentifier() | 0)) {
+                this.setValue(oEv.getKeyIdentifier());
                 oEv.stopPropagation();
                 oEv.preventDefault();
             }

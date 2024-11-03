@@ -34,42 +34,42 @@ qx.Class.define("sidooqoo.MainWindow",{
 
         this.buildEmptyPuzzle();
 
-        var loadPuzzleButton = new qx.ui.form.Button("Load difficult problem");
-        this.add(loadPuzzleButton,{column:10,row:10});
-
         this.svc = new sidooqoo.PuzzleDataService();
-
         this.svc.fetchPuzzleData();
 
-
+        var loadPuzzleButton = new qx.ui.form.Button("Load difficult problem");
+        this.add(loadPuzzleButton,{column:10,row:10});
         loadPuzzleButton.addListener(
           "execute",
           function () {
-            this.svc.fetchPuzzleData();
-            // TODO load puzzle with data
-            let oData = this.svc.getPuzzleData().toArray()[0].getEvilPuzzleData().toArray();
-            console.log(oData);
-            },
+                this.svc.fetchPuzzleData();
+                // TODO load puzzle with data
+                let oData = this.svc.getPuzzleData().toArray()[0].getEvilPuzzleData().toArray();
+                for(let i=0; i< 81; i++) {                
+                    let oPuzzleCell = this._puzzleCells[i];
+                    oPuzzleCell.setValue(oData[i].toString() === '0'?'':oData[i].toString());
+                    oPuzzleCell.setFixed(oData[i] > 0);
+                    oPuzzleCell.setBackgroundColor(oData[i] > 0? "#a1a6d3":"white");
+                }
 
+            },
           this
         );
-        /*
-        this.svc.addListener(
-            "postOk",
-            function () {
-              main.clearPostMessage();
-              service.fetchTweets();
-            },
-            this
-          );
 
-          this.svc.bind("puzzleData", list, "model", {
-            converter(value) {
-              return value || new qx.data.Array();
-            },
-          });
-        */
+        var solvePuzzleButton = new qx.ui.form.Button("Solve");
+        this.add(solvePuzzleButton,{column:10,row:12});
+        solvePuzzleButton.addListener(
+          "execute",
+          function () {            
+                console.log('Solve...');
 
+                const oSolver = new sidooqoo.Solver(this._puzzleQueries,()=>{
+                    debugger;
+                });
+                oSolver.execute();
+            },
+          this
+        );
            
     },
     members: {
@@ -81,7 +81,7 @@ qx.Class.define("sidooqoo.MainWindow",{
             let iCellIndex = 0;
             for (let row = 0; row < 9; row++) {
                 for(let col=0; col< 9; col++) {                
-                    var textField = new sidooqoo.PuzzleCell();                 
+                    var textField = new sidooqoo.PuzzleCellControl();                 
                     textField.setCellIndex(iCellIndex++);
                     if (row % 3 == 0) {
                         textField.setMarginTop(20);

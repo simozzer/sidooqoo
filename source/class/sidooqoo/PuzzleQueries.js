@@ -57,33 +57,58 @@ qx.Class.define("sidooqoo.PuzzleQueries",{
          
         },
         canSetCellValue(oCell, iValue) {
-            let rowCells = this.getCellsInRow(oCell.getDataRow());
-            for(let i=0; i<9;i++) {
-                if (rowCells[i].getValue() == iValue) {
-                    console.log('Event should be cancelled as it classes with a value in the row');
-                    return false;
+            // review ok
+            const iRow = oCell.getDataRow();
+            const iCol = oCell.getDataCol();
+            const iTableIndex = oCell.getInnerCellIndex();
+            let bCanEdit = false;
+            
+            let cellsWithMatchingValuesInRow = this.getCellsInRow(iRow).find(o => {if ((o.getValue() | 0) === iValue) { return true;} });
+            if (cellsWithMatchingValuesInRow == undefined) {
+                let cellsWithMatchingValuesInColumn = this.getCellsInColumn(iCol).find(o => {if ((o.getValue() | 0) === iValue) { return true;} });
+                if (cellsWithMatchingValuesInColumn == undefined) {
+                    let cellsWithMatchingValuesInTable = this.getCellsInSameTable(iTableIndex).find(o => (o.getValue() | 0 )=== iValue);
+                    if (cellsWithMatchingValuesInTable == undefined) {
+                        return true;
+                    }
                 }
-            }
-           
-            let colCells = this.getCellsInColumn(oCell.getDataCol());
-            for(let i=0; i<9;i++) {
-                // console.log(`Col: index:${i} col:${colCells[i].getDataCol()} value:${colCells[i].getValue()}`);
-                if (colCells[i].getValue() == iValue) {
-                    return false;
-                }
-            }
-
-            let innerCellCells = this.getCellsInSameTable(oCell.getInnerCellIndex(oCell));
-            for(let i=0; i<9;i++) {
-                // console.log(`Col: index:${i} col:${innerCellCells[i].getDataCol()} value:${innerCellCells[i].getValue()}`);
-                if (innerCellCells[i].getValue() == iValue) {
-                    console.log('Event should be cancelled as it classes with a value in the inner table');
-                    return false;
-                }
-            }            
-
-            return true;
+            }        
+            return false;           
+ 
         },
+        getPossibleValues(oCell) {         
+            // reviuew ok
+            const aPossibleValues = [];
+            const iRow = oCell.getDataRow();
+            const iCol = oCell.getDataCol();
+            const iTableIndex = oCell.getInnerCellIndex();
+            for (let iPossibleValue = 1; iPossibleValue < 10; iPossibleValue++) {
+                if ((!this.getCellsInRow(iRow).find(oRowCell => (oRowCell.getValue() | 0) === iPossibleValue))
+                    && (!this.getCellsInColumn(iCol).find(oColumnCell => (oColumnCell.getValue() | 0) === iPossibleValue))
+                    && (!this.getCellsInSameTable(iTableIndex).find(oInnerTableCell => (oInnerTableCell.getValue()| 0) === iPossibleValue))) {
+                    aPossibleValues.push(iPossibleValue);
+                }
+
+
+            }
+            return aPossibleValues;
+        },
+        canSetACellValue(oCell) {
+            const aPossibleCellValues = this.getPossibleValues(oCell);
+            let iChoiceIndex = oCell.getChoiceIndex();
+            const iLen = aPossibleCellValues.length;
+            if (iChoiceIndex < iLen) {
+                let choice = aPossibleCellValues[iChoiceIndex];
+                while ((iChoiceIndex < iLen) && (!this.canSetCellValue(oCell, choice))) {
+                    iChoiceIndex++;
+                }
+                if (this.canSetCellValue(oCell, choice)) {
+                    oCell.setChoiceIndex(iChoiceIndex);
+                    return true;
+                }
+            }
+            return false;
+        }
 
     }
 
