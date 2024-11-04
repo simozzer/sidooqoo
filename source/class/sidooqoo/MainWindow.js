@@ -45,12 +45,12 @@ qx.Class.define("sidooqoo.MainWindow",{
           function () {
                 this.svc.fetchPuzzleData();
                 // TODO load puzzle with data
-                let oData = this.svc.getPuzzleData().toArray()[0].getEvilPuzzleData().toArray();
+                let oData = this.svc.getPuzzleData().toArray()[0].getShinningStarData().toArray();
                 for(let i=0; i< 81; i++) {                
                     let oPuzzleCell = this._puzzleCells[i];
-                    oPuzzleCell.setValue(oData[i].toString() === '0'?'':oData[i].toString());
+                    oPuzzleCell.setValue(oData[i].toString() === '0'?0:oData[i]);
                     oPuzzleCell.setFixed(oData[i] > 0);
-                    oPuzzleCell.setBackgroundColor(oData[i] > 0? "#a1a6d3":"white");
+                    //TODO:: oPuzzleCell.setBackgroundColor(oData[i] > 0? "#a1a6d3":"white");
                 }
 
             },
@@ -82,8 +82,10 @@ qx.Class.define("sidooqoo.MainWindow",{
             let iCellIndex = 0;
             for (let row = 0; row < 9; row++) {
                 for(let col=0; col< 9; col++) {                
-                    var textField = new sidooqoo.PuzzleCellControl();                 
+                    var textField = new sidooqoo.PuzzleCell();     
+                                
                     textField.setCellIndex(iCellIndex++);
+                    /*
                     if (row % 3 == 0) {
                         textField.setMarginTop(20);
                     } else {
@@ -97,6 +99,7 @@ qx.Class.define("sidooqoo.MainWindow",{
                     }
        
                     this.add(textField, {column: col, row: row});
+                    */
     
                     this._puzzleCells.push(textField);
                 }                        

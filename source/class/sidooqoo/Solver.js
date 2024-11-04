@@ -37,7 +37,7 @@ qx.Class.define("sidooqoo.Solver",{
                             this.solvedSometing = true;
                             stepProducedProgress = true;
                             continueLooping = true;
-                            oCellToAdjust.setValue(''+possibleValue);
+                            oCellToAdjust.setValue(possibleValue);
                             if (!this._fast) {
                                 this._intervalsRemaining --;
                                 if (this._intervalsRemaining >= 0) {
@@ -121,7 +121,7 @@ qx.Class.define("sidooqoo.Solver",{
             }
         },
         
-        async doExecuteAsync() {
+        doExecuteAsync() {
             return new Promise((resolve) => {
                 window.setTimeout(function (that) {
                     if (that.processNextCell()) {
@@ -164,10 +164,12 @@ qx.Class.define("sidooqoo.Solver",{
                 
                 oCells.forEach(oCell => {
                     if (!oCell.getFixed()) {
+                        /*
                         const oElem = oCell.getContentElement().getDomElement();
                         oElem.innerHTML = oCell.getValue();
                         oElem.classList.remove('bob');
                         oElem.classList.add('solved');                    
+                        */
                     }
                 });
             } else {
@@ -231,13 +233,15 @@ qx.Class.define("sidooqoo.Solver",{
             const aPossibleCellValues = queries.getPossibleValues(oSolveCell);
             const iLen = aPossibleCellValues.length;
             if (oSolveCell.getChoiceIndex() < iLen && queries.canSetACellValue(oSolveCell)) {
-                oSolveCell.setValue(''+ aPossibleCellValues[oSolveCell.getChoiceIndex()]);
+                oSolveCell.setValue(aPossibleCellValues[oSolveCell.getChoiceIndex()]);
                 oSolveCell.setSuggested(true);
                 oSolveCell.setPassIndex(this.getPassIndex());
                 if (!this._fast) {
+                    /*
                     const elem = oSolveCell.getContentElement().getDomElement();
                     elem.innerHTML = oSolveCell.getValue() + "";
                     elem.classList.add('suggested');
+                    */
                 }
                 this._stack.push(oSolveCell);
                 this.doSimpleSolve(this._bail_early);
@@ -254,12 +258,14 @@ qx.Class.define("sidooqoo.Solver",{
             oSingleValueCells.forEach(oCell => {
                 const iValue = oPuzzleQueries.getPossibleValues(oCell)[0];
                 if (iValue && oPuzzleQueries.canSetCellValue(oCell, iValue)) {
-                    oCell.setValue(''+iValue);
+                    oCell.setValue(iValue);
                     if (!this._fast) {
+                        /*
                         const elem = oCell.getContentElement().getDomElement();
                         elem.innerText = iValue;
                         elem.title = '';
                         elem.classList.add('solved');
+                        */
                     }
                     oCell.setSolved();
                     oCell.setPassIndex(that._passIndex);
