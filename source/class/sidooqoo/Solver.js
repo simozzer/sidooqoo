@@ -10,7 +10,7 @@ qx.Class.define("sidooqoo.Solver",{
         _sortedPossibleValuesList: [],
         _passIndex: 0,
         _stack: [],
-        _fast: true,
+        _fast: false,
         _fnComplete: undefined,
         _fastinterval: 8000,
         _intervalsRemaining: 0,
@@ -44,9 +44,10 @@ qx.Class.define("sidooqoo.Solver",{
                                     this._intervalsRemaining --;
                                 } else {
                                     this._intervalsRemaining = this._fastinterval;
-                                    //TODO:: oCellToAdjust.element.innerText = possibleValue;
-                                    //TODO:: oCellToAdjust.element.title = '';
-                                   //TODO::  oCellToAdjust.element.classList.add('solved');
+                                    const elem = this.getContentElement().getDomElement();
+                                    elem.innerText = possibleValue;
+                                    elem.title = '';
+                                    elem.classList.add('solved');
                                 }
                             }
                             oCellToAdjust.setSolved();
@@ -163,10 +164,10 @@ qx.Class.define("sidooqoo.Solver",{
                 
                 oCells.forEach(oCell => {
                     if (!oCell.getFixed()) {
-                        const oElem = oCell.element;
-                        //TODO:: oElem.innerHTML = oCell.getValue();
-                        //TODO:: oElem.classList.remove('bob');
-                        //TODO:: oElem.classList.add('solved');                    
+                        const oElem = oCell.getContentElement().getDomElement();
+                        oElem.innerHTML = oCell.getValue();
+                        oElem.classList.remove('bob');
+                        oElem.classList.add('solved');                    
                     }
                 });
             } else {
@@ -234,8 +235,9 @@ qx.Class.define("sidooqoo.Solver",{
                 oSolveCell.setSuggested(true);
                 oSolveCell.setPassIndex(this.getPassIndex());
                 if (!this._fast) {
-                    //TODO:: oSolveCell.element.innerHTML = oSolveCell.getValue() + "";
-                    //TODO:: oSolveCell.element.classList.add('suggested');
+                    const elem = oSolveCell.getContentElement().getDomElement();
+                    elem.innerHTML = oSolveCell.getValue() + "";
+                    elem.classList.add('suggested');
                 }
                 this._stack.push(oSolveCell);
                 this.doSimpleSolve(this._bail_early);
@@ -254,9 +256,10 @@ qx.Class.define("sidooqoo.Solver",{
                 if (iValue && oPuzzleQueries.canSetCellValue(oCell, iValue)) {
                     oCell.setValue(''+iValue);
                     if (!this._fast) {
-                        //TODO:: oCell.element.innerText = iValue;
-                        //TODO:: oCell.element.title = '';
-                        //TODO:: oCell.element.classList.add('solved');
+                        const elem = oCell.getContentElement().getDomElement();
+                        elem.innerText = iValue;
+                        elem.title = '';
+                        elem.classList.add('solved');
                     }
                     oCell.setSolved();
                     oCell.setPassIndex(that._passIndex);

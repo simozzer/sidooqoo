@@ -37,8 +37,9 @@ qx.Class.define("sidooqoo.MainWindow",{
         this.svc = new sidooqoo.PuzzleDataService();
         this.svc.fetchPuzzleData();
 
-        var loadPuzzleButton = new qx.ui.form.Button("Load difficult problem");
-        this.add(loadPuzzleButton,{column:10,row:10});
+        var loadPuzzleButton = new qx.ui.form.Button("Load problem");
+        this.add(loadPuzzleButton,{column:2,row:11,colSpan:5});
+
         loadPuzzleButton.addListener(
           "execute",
           function () {
@@ -56,15 +57,15 @@ qx.Class.define("sidooqoo.MainWindow",{
           this
         );
 
-        var solvePuzzleButton = new qx.ui.form.Button("Solve");
-        this.add(solvePuzzleButton,{column:10,row:12});
+        var solvePuzzleButton = new qx.ui.form.Button("Give me solutions, not problems.");
+        this.add(solvePuzzleButton,{column:0,row:12,colSpan:9});
         solvePuzzleButton.addListener(
           "execute",
           function () {            
                 console.log('Solve...');
 
-                const oSolver = new sidooqoo.Solver(this._puzzleQueries,()=>{
-                    debugger;
+                const oSolver = new sidooqoo.Solver(this._puzzleQueries,(a)=>{
+                    window.alert(a);
                 });
                 oSolver.execute();
             },
