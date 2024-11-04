@@ -61,7 +61,6 @@ qx.Class.define("sidooqoo.PuzzleQueries",{
             const iRow = oCell.getDataRow();
             const iCol = oCell.getDataCol();
             const iTableIndex = oCell.getInnerCellIndex();
-            let bCanEdit = false;
             
             let cellsWithMatchingValuesInRow = this.getCellsInRow(iRow).find(o => {if ((o.getValue() | 0) === iValue) { return true;} });
             if (cellsWithMatchingValuesInRow == undefined) {

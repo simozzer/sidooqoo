@@ -47,6 +47,9 @@ qx.Class.define("sidooqoo.PuzzleCellControl",{
                 this._valueState = this._valueState &! sidooqoo.PuzzleCellControl.cellValueStates.FIXED;
             }
         },
+        getFixed() {
+            return this._valueState == sidooqoo.PuzzleCellControl.cellValueStates.FIXED;
+        },
         getPassIndex() {
             return this._passIndex;
         },
@@ -78,7 +81,7 @@ qx.Class.define("sidooqoo.PuzzleCellControl",{
         getSuggested() {
             return this._valueState === sidooqoo.PuzzleCellControl.cellValueStates.SUGGESTED;
         },    
-        getSuggested(bSuggested) {
+        setSuggested(bSuggested) {
             this._valueState = bSuggested ? sidooqoo.PuzzleCellControl.cellValueStates.SUGGESTED : undefined;
         },
         

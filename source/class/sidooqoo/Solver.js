@@ -44,9 +44,9 @@ qx.Class.define("sidooqoo.Solver",{
                                     this._intervalsRemaining --;
                                 } else {
                                     this._intervalsRemaining = this._fastinterval;
-                                    oCellToAdjust.element.innerText = possibleValue;
-                                    oCellToAdjust.element.title = '';
-                                    oCellToAdjust.element.classList.add('solved');
+                                    //TODO:: oCellToAdjust.element.innerText = possibleValue;
+                                    //TODO:: oCellToAdjust.element.title = '';
+                                   //TODO::  oCellToAdjust.element.classList.add('solved');
                                 }
                             }
                             oCellToAdjust.setSolved();
@@ -119,6 +119,7 @@ qx.Class.define("sidooqoo.Solver",{
                 window.alert(err);
             }
         },
+        
         async doExecuteAsync() {
             return new Promise((resolve) => {
                 window.setTimeout(function (that) {
@@ -163,9 +164,9 @@ qx.Class.define("sidooqoo.Solver",{
                 oCells.forEach(oCell => {
                     if (!oCell.getFixed()) {
                         const oElem = oCell.element;
-                        oElem.innerHTML = oCell.getValue();
-                        oElem.classList.remove('bob');
-                        oElem.classList.add('solved');                    
+                        //TODO:: oElem.innerHTML = oCell.getValue();
+                        //TODO:: oElem.classList.remove('bob');
+                        //TODO:: oElem.classList.add('solved');                    
                     }
                 });
             } else {
@@ -178,7 +179,7 @@ qx.Class.define("sidooqoo.Solver",{
                 } while (oCells.filter(cell => (cell.getValue() | 0)  === 0).length > 0);
              }
             const duration = new Date().getTime() - startTime;
-            document.querySelector('#everywhere table').classList.add('solved');
+            //TODO::  document.querySelector('#everywhere table').classList.add('solved');
             if (typeof(this._fnComplete) === "function") {
                 this._fnComplete(`Done: 'doExecute' was called ${iExecutionCount} times and took ${duration} ms.`);
             }
@@ -186,24 +187,25 @@ qx.Class.define("sidooqoo.Solver",{
         },
 
         rewind() {
+            var that = this;
             const oLastUpdatedCell = this._stack.pop();
             this._puzzleQueries._aCells.forEach(o => {
                 if (o.getPassIndex() === oLastUpdatedCell.getPassIndex()) {
                     o.reset(this._fast);
                 }
             })
-            oLastUpdatedCell.choiceIndex++;
+            oLastUpdatedCell.setChoiceIndex(oLastUpdatedCell.getChoiceIndex()+1);
             oLastUpdatedCell.reset(this._fast);
             const oPuzzleQueries = this._puzzleQueries;
             if (!oPuzzleQueries.canSetACellValue(oLastUpdatedCell)) {
-                oLastUpdatedCell.choiceIndex = 0;
-                const oPrevCell = this._stack[this._stack.length - 1];
+                oLastUpdatedCell.setChoiceIndex(0);
+                const oPrevCell = that._stack[that._stack.length - 1];
                 oPuzzleQueries._aCells.forEach(o => {
                     if (o.getPassIndex() === oPrevCell.getPassIndex()) {
-                        o.reset(this._fast);
+                        o.reset(that._fast);
                     }
                 });
-                oPrevCell.reset(this._fast);
+                oPrevCell.reset(that._fast);
                 this.rewind();
             }
         },
@@ -229,11 +231,11 @@ qx.Class.define("sidooqoo.Solver",{
             const iLen = aPossibleCellValues.length;
             if (oSolveCell.getChoiceIndex() < iLen && queries.canSetACellValue(oSolveCell)) {
                 oSolveCell.setValue(''+ aPossibleCellValues[oSolveCell.getChoiceIndex()]);
-                oSolveCell.suggested = true;
+                oSolveCell.setSuggested(true);
                 oSolveCell.setPassIndex(this.getPassIndex());
                 if (!this._fast) {
-                    oSolveCell.element.innerHTML = oSolveCell.getValue() + "";
-                    oSolveCell.element.classList.add('suggested');
+                    //TODO:: oSolveCell.element.innerHTML = oSolveCell.getValue() + "";
+                    //TODO:: oSolveCell.element.classList.add('suggested');
                 }
                 this._stack.push(oSolveCell);
                 this.doSimpleSolve(this._bail_early);
@@ -244,6 +246,7 @@ qx.Class.define("sidooqoo.Solver",{
         },
 
         applyCellsWithOnePossibleValue() {
+            var that = this;
             const oPuzzleQueries = this._puzzleQueries;
             const oSingleValueCells = this._sortedPossibleValuesList.filter(oCell => (((oCell.getValue() | 0) < 1) && oPuzzleQueries.getPossibleValues(oCell).length === 1));
             oSingleValueCells.forEach(oCell => {
@@ -251,12 +254,12 @@ qx.Class.define("sidooqoo.Solver",{
                 if (iValue && oPuzzleQueries.canSetCellValue(oCell, iValue)) {
                     oCell.setValue(''+iValue);
                     if (!this._fast) {
-                        oCell.element.innerText = iValue;
-                        oCell.element.title = '';
-                        oCell.element.classList.add('solved');
+                        //TODO:: oCell.element.innerText = iValue;
+                        //TODO:: oCell.element.title = '';
+                        //TODO:: oCell.element.classList.add('solved');
                     }
                     oCell.setSolved();
-                    oCell.setPassIndex(this._passIndex);
+                    oCell.setPassIndex(that._passIndex);
                     return true;
                 }
             });
