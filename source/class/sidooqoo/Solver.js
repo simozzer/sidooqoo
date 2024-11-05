@@ -4,18 +4,15 @@
  *
  * @asset(sidooqoo/*)
  */
-qx.Class.define("sidooqoo.Solver",{
+qx.Class.define("sidooqoo.Solver", {
     extend: qx.core.Object,
     members: {
-        _sortedPossibleValuesList: [],
         _passIndex: 0,
-        _stack: [],
         _fast: false,
         _fnComplete: undefined,
         _fastinterval: 8000,
         _intervalsRemaining: 0,
         _bail_early: true,
-        _puzzleQueries: {},
         // Within a set of 9 cells find and cells which can be the only cell containing a specific value and set them
         solveCells(aCellsToSolve) {
             let stepProducedProgress = false;
@@ -39,15 +36,15 @@ qx.Class.define("sidooqoo.Solver",{
                             continueLooping = true;
                             oCellToAdjust.setValue(possibleValue);
                             if (!this._fast) {
-                                this._intervalsRemaining --;
+                                this._intervalsRemaining--;
                                 if (this._intervalsRemaining >= 0) {
-                                    this._intervalsRemaining --;
+                                    this._intervalsRemaining--;
                                 } else {
                                     this._intervalsRemaining = this._fastinterval;
                                     const elem = this.getContentElement().getDomElement();
                                     elem.innerText = possibleValue;
-                                    elem.title = '';
-                                    elem.classList.add('solved');
+                                    elem.title = "";
+                                    elem.classList.add("solved");
                                 }
                             }
                             oCellToAdjust.setSolved();
@@ -85,7 +82,7 @@ qx.Class.define("sidooqoo.Solver",{
             let stepProducedProgress = false;
             do {
                 stepProducedProgress = false;
-                for (let i = 0;((i < 9) && this.solveCells(this._puzzleQueries.getCellsInColumn(i))); i++) {
+                for (let i = 0; ((i < 9) && this.solveCells(this._puzzleQueries.getCellsInColumn(i))); i++) {
                     stepProducedProgress = true;
                 }
             } while (stepProducedProgress);
@@ -96,33 +93,32 @@ qx.Class.define("sidooqoo.Solver",{
         doSimpleSolve(bailEarly) {
             try {
                 let solvedSomething = true;
-                while (solvedSomething) {  
-                    
+                while (solvedSomething) {
                     if (bailEarly) {
-                        this.solvedSomething = this.solveRows() 
-                                            || this.solveColumns() 
-                                            || this.solveInnerTables() 
-                                            || this.solveSomething(bailEarly);
+                        solvedSomething = this.solveRows() || 
+                                            this.solveColumns() || 
+                                            this.solveInnerTables() || 
+                                            this.solveSomething(bailEarly);
+                        this.solvedSomething = solvedSomething;
                         return this.solvedSomething;                    
-                    } else {
-      
-                        this.solvedSomething = this.solveRows() 
-                                            && this.solveColumns() 
-                                            && this.solveInnerTables() 
-                                            && this.solvedSomething(bailEarly);                                             
-    
-                        return this.solvedSomething;                      
-                    }
+                    } 
                     
-    
+      
+                        solvedSomething = this.solveRows() && 
+                                            this.solveColumns() && 
+                                            this.solveInnerTables() && 
+                                            this.solvedSomething(bailEarly);                                                                                        
+                        this.solvedSomething = solvedSomething;
+                        return this.solvedSomething;
                 }
-            } catch (err) {
-                window.alert(err);
+                return false;
+            } catch (err) {                
+                throw new Error(err);
             }
         },
         
         doExecuteAsync() {
-            return new Promise((resolve) => {
+            return new Promise(resolve => {
                 window.setTimeout(function (that) {
                     if (that.processNextCell()) {
                         that.setPassIndex(that.getPassIndex()+1);
@@ -131,7 +127,6 @@ qx.Class.define("sidooqoo.Solver",{
                         that.rewind();
                         resolve(false);
                     }
-                    
                 }, 0, this);
             });
         },
@@ -139,7 +134,7 @@ qx.Class.define("sidooqoo.Solver",{
 
         doExecute() {
             if (this.processNextCell()) {
-                this._passIndex++
+                this._passIndex++;
             } else {
                 this.rewind();
             }
@@ -174,19 +169,16 @@ qx.Class.define("sidooqoo.Solver",{
                 });
             } else {
                 do {
-
                         this.doExecuteAsync().then(() => {                        
                             iExecutionCount++;
                         });
-
-                } while (oCells.filter(cell => (cell.getValue() | 0)  === 0).length > 0);
+                } while (oCells.filter(cell => (cell.getValue() | 0) === 0).length > 0);
              }
             const duration = new Date().getTime() - startTime;
-            //TODO::  document.querySelector('#everywhere table').classList.add('solved');
-            if (typeof(this._fnComplete) === "function") {
+            // TODO ::  document.querySelector('#everywhere table').classList.add('solved');
+            if (typeof (this._fnComplete) === "function") {
                 this._fnComplete(`Done: 'doExecute' was called ${iExecutionCount} times and took ${duration} ms.`);
             }
-            
         },
 
         rewind() {
@@ -196,7 +188,7 @@ qx.Class.define("sidooqoo.Solver",{
                 if (o.getPassIndex() === oLastUpdatedCell.getPassIndex()) {
                     o.reset(this._fast);
                 }
-            })
+            });
             oLastUpdatedCell.setChoiceIndex(oLastUpdatedCell.getChoiceIndex()+1);
             oLastUpdatedCell.reset(this._fast);
             const oPuzzleQueries = this._puzzleQueries;
@@ -227,7 +219,7 @@ qx.Class.define("sidooqoo.Solver",{
             if (this._sortedPossibleValuesList.map(o => queries.getPossibleValues(o)).filter(o => o.length > 0).length === 0) {
                 // some of the cells on the grid have no possible answer
                 return false;
-            };
+            }
     
             const oSolveCell = cellsWithMutlipleSolutions[0];
             const aPossibleCellValues = queries.getPossibleValues(oSolveCell);
@@ -246,9 +238,8 @@ qx.Class.define("sidooqoo.Solver",{
                 this._stack.push(oSolveCell);
                 this.doSimpleSolve(this._bail_early);
                 return true;
-            } else {
+            } 
                 return false;
-            }
         },
 
         applyCellsWithOnePossibleValue() {
@@ -271,6 +262,7 @@ qx.Class.define("sidooqoo.Solver",{
                     oCell.setPassIndex(that._passIndex);
                     return true;
                 }
+                return false;
             });
             return false;
         },
@@ -285,7 +277,7 @@ qx.Class.define("sidooqoo.Solver",{
                         return true;
                     }
                 }
-            } while (stepProducedProgress)
+            } while (stepProducedProgress);
             return stepProducedProgress;
         },
         getPassIndex() {
@@ -294,13 +286,14 @@ qx.Class.define("sidooqoo.Solver",{
         },
         construct(oPuzzleQueries, fnComplete) {
             this._puzzleQueries = oPuzzleQueries;
-            this._fast = true,
+            this._fast = true;
             this._cells = this._puzzleQueries._aCells;
-            this._sortedPossibleValuesList = this._cells.filter(oCell => oCell.getValue() | 0  < 1).sort((a, b) => oPuzzleQueries.getPossibleValues(a).length - oPuzzleQueries.getPossibleValues(b).length);
+            this._sortedPossibleValuesList = this._cells.filter(oCell => oCell.getValue() | 0 < 1).sort((a, b) => oPuzzleQueries.getPossibleValues(a).length - oPuzzleQueries.getPossibleValues(b).length);            
             this._fnComplete = fnComplete;
             this._intervalsRemaining = this._fastinterval;
             this._passIndex = 0;
-        },
+            this._stack = [];
+        }
     
     
 

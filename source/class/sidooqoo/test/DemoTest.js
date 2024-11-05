@@ -35,8 +35,7 @@ qx.Class.define("sidooqoo.test.DemoTest",
     /**
      * Here are some simple tests
      */
-    testSimple()
-    {
+    testSimple() {
       this.assertEquals(4, 3+1, "This should never fail!");
       this.assertFalse(false, "Can false be true?!");
     },
@@ -44,8 +43,7 @@ qx.Class.define("sidooqoo.test.DemoTest",
     /**
      * Here are some more advanced tests
      */
-    testAdvanced()
-    {
+    testAdvanced() {
       let a = 3;
       let b = a;
       this.assertIdentical(a, b, "A rose by any other name is still a rose");

@@ -33,14 +33,12 @@ qx.Class.define("sidooqoo.Application",
      *
      * @lint ignoreDeprecated(alert)
      */
-    main()
-    {
+    main() {
       // Call super class
       super.main();
 
       // Enable logging in debug variant
-      if (qx.core.Environment.get("qx.debug"))
-      {
+      if (qx.core.Environment.get("qx.debug")) {
         // support native logging capabilities, e.g. Firebug for Firefox
         qx.log.appender.Native;
         // support additional cross-browser console. Press F7 to toggle visibility
@@ -57,7 +55,6 @@ qx.Class.define("sidooqoo.Application",
       var main = new sidooqoo.MainWindow();
       main.moveTo(50, 30);
       main.open();
-
     }
   }
 });

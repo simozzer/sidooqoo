@@ -4,7 +4,7 @@
  *
  * @asset(sidooqoo/*)
  */
-qx.Class.define("sidooqoo.PuzzleCell",{
+qx.Class.define("sidooqoo.PuzzleCell", {
     extend: qx.core.Object,
     statics: {
         cellValueStates: {
@@ -44,7 +44,7 @@ qx.Class.define("sidooqoo.PuzzleCell",{
             if (fixed) {
                 this._valueState = sidooqoo.PuzzleCell.cellValueStates.FIXED;
             } else {
-                this._valueState = this._valueState &! sidooqoo.PuzzleCell.cellValueStates.FIXED;
+                this._valueState &=!sidooqoo.PuzzleCell.cellValueStates.FIXED;
             }
         },
         getFixed() {

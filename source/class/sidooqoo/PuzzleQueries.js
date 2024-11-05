@@ -4,7 +4,7 @@
  *
  * @asset(sidooqoo/*)
  */
-qx.Class.define("sidooqoo.PuzzleQueries",{
+qx.Class.define("sidooqoo.PuzzleQueries", {
     extend: qx.core.Object,
     construct(aCells) {
         this._aCells = aCells;
@@ -18,14 +18,13 @@ qx.Class.define("sidooqoo.PuzzleQueries",{
             if (cached == undefined) {
                 let items = [];
                 let iStartCellIndex = iRowIndex * 9;
-                for (let iCellIndex = iStartCellIndex ; iCellIndex < iStartCellIndex + 9 ; iCellIndex ++) {
+                for (let iCellIndex = iStartCellIndex; iCellIndex < iStartCellIndex + 9; iCellIndex++) {
                     items.push(this._aCells[iCellIndex]);
                 }
                 this._aRowCells[iRowIndex] = items;
                 return items;
-            } else {
+            } 
                 return cached;
-            }
         },
         getCellsInColumn(iColIndex) {
             let cached = this._aColCells[iColIndex];
@@ -36,25 +35,22 @@ qx.Class.define("sidooqoo.PuzzleQueries",{
                 }
                 this._aColCells[iColIndex] = items;
                 return items;
-            } else {
+            } 
                 return cached;
-            }
         },
         getCellsInSameTable(innerCellIndex) {
             let cached = this._aSameTableCells[innerCellIndex];
             if (cached == undefined) {
                 let innerCellCells = [];
-                for(let i in this._aCells) {
+                for (let i in this._aCells) {
                     if (this._aCells[i].getInnerCellIndex() === innerCellIndex) {
                         innerCellCells.push(this._aCells[i]);
                     }
                 }
                 this._aSameTableCells[innerCellIndex] = innerCellCells;
                 return innerCellCells;
-            } else {
+            } 
                 return cached;
-            }
-         
         },
         canSetCellValue(oCell, iValue) {
             // review ok
@@ -62,18 +58,17 @@ qx.Class.define("sidooqoo.PuzzleQueries",{
             const iCol = oCell.getDataCol();
             const iTableIndex = oCell.getInnerCellIndex();
             
-            let cellsWithMatchingValuesInRow = this.getCellsInRow(iRow).find(o => {if ((o.getValue() | 0) === iValue) { return true;} });
-            if (cellsWithMatchingValuesInRow == undefined) {
-                let cellsWithMatchingValuesInColumn = this.getCellsInColumn(iCol).find(o => {if ((o.getValue() | 0) === iValue) { return true;} });
-                if (cellsWithMatchingValuesInColumn == undefined) {
-                    let cellsWithMatchingValuesInTable = this.getCellsInSameTable(iTableIndex).find(o => (o.getValue() | 0 )=== iValue);
-                    if (cellsWithMatchingValuesInTable == undefined) {
+            let cellsWithMatchingValuesInRow = this.getCellsInRow(iRow).find(o => ((o.getValue() | 0) === iValue));
+            if (!cellsWithMatchingValuesInRow) {
+                let cellsWithMatchingValuesInColumn = this.getCellsInColumn(iCol).find(o => ((o.getValue() | 0) === iValue));
+                if (!cellsWithMatchingValuesInColumn) {
+                    let cellsWithMatchingValuesInTable = this.getCellsInSameTable(iTableIndex).find(o => (o.getValue() | 0)=== iValue);
+                    if (!cellsWithMatchingValuesInTable) {
                         return true;
                     }
                 }
-            }        
-            return false;           
- 
+            }                    
+            return false;
         },
         getPossibleValues(oCell) {         
             // reviuew ok
@@ -82,13 +77,11 @@ qx.Class.define("sidooqoo.PuzzleQueries",{
             const iCol = oCell.getDataCol();
             const iTableIndex = oCell.getInnerCellIndex();
             for (let iPossibleValue = 1; iPossibleValue < 10; iPossibleValue++) {
-                if ((!this.getCellsInRow(iRow).find(oRowCell => (oRowCell.getValue() | 0) === iPossibleValue))
-                    && (!this.getCellsInColumn(iCol).find(oColumnCell => (oColumnCell.getValue() | 0) === iPossibleValue))
-                    && (!this.getCellsInSameTable(iTableIndex).find(oInnerTableCell => (oInnerTableCell.getValue()| 0) === iPossibleValue))) {
+                if ((!this.getCellsInRow(iRow).find(oRowCell => (oRowCell.getValue() | 0) === iPossibleValue)) &&
+                    (!this.getCellsInColumn(iCol).find(oColumnCell => (oColumnCell.getValue() | 0) === iPossibleValue)) &&
+                    (!this.getCellsInSameTable(iTableIndex).find(oInnerTableCell => (oInnerTableCell.getValue()| 0) === iPossibleValue))) {
                     aPossibleValues.push(iPossibleValue);
                 }
-
-
             }
             return aPossibleValues;
         },
