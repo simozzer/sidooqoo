@@ -96,7 +96,7 @@ qx.Class.define("sidooqoo.PuzzleCellControl",{
             if (puzzleQueries.canSetCellValue(this._cellData,oEv.getKeyIdentifier() | 0)) {
                 
                 let keyNumericValue = parseInt(oEv.getKeyIdentifier(),10);
-                if (isNumeric(keyNumericValue)) {
+                if (keyNumericValue) {
                     this.setValue(' ' + keyNumericValue);
                     this._cellData.setValue(keyNumericValue);
                 }

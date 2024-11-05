@@ -30,7 +30,7 @@ qx.Class.define("sidooqoo.MainWindow",{
         // add the layout
         var layout = new qx.ui.layout.Grid(0, 0);
         this.setLayout(layout);
-        this.setContentPadding(5);
+        this.setContentPadding(20);
 
         this.buildEmptyPuzzle();
 
@@ -49,7 +49,9 @@ qx.Class.define("sidooqoo.MainWindow",{
                 for(let i=0; i< 81; i++) {                
                     let oPuzzleCell = this._puzzleCells[i];
                     oPuzzleCell.setValue(oData[i]);
-                    oPuzzleCell.setFixed(oData[i] > 0);                    
+                    oPuzzleCell.setFixed(oData[i] > 0);
+                    oPuzzleCell.setPassIndex(0);
+                    oPuzzleCell.setChoiceIndex(0);                 
                     //TODO:: oPuzzleCell.setBackgroundColor(oData[i] > 0? "#a1a6d3":"white");
                 }
                 this.updateGrid();
@@ -62,7 +64,7 @@ qx.Class.define("sidooqoo.MainWindow",{
         solvePuzzleButton.addListener(
           "execute",
           function () {            
-                console.log('Solve...');
+                console.log('Solve...');                
 
                 const oSolver = new sidooqoo.Solver(this._puzzleQueries,(a)=>{
                     this.updateGrid();
