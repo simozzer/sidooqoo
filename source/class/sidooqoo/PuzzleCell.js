@@ -16,11 +16,11 @@ qx.Class.define("sidooqoo.PuzzleCell",{
         }
     },
     properties: {
-        value: { check: "Number" },
+        _value: { check: "Number" },
         cellIndex : { check : "Number" },        
         puzzleQueries: {},
         _valueState: { check: "Number" },
-        element: {}
+        _element: {}
     },
     members: {
         getDataRow() {
@@ -87,7 +87,19 @@ qx.Class.define("sidooqoo.PuzzleCell",{
         reset(bFast) {
             this.setValue(0);
             this._valueState = sidooqoo.PuzzleCell.cellValueStates.EMPTY;
-        },        
+        },
+        setElement(oElement) {
+            this._element = oElement;
+        },
+        getElement() {
+            return this._element;
+        },
+        getValue() {
+            return this._value;
+        },
+        setValue(val) {
+            this._value = val;
+        }
     },
     construct() {
         super(); 

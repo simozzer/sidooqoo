@@ -6,88 +6,12 @@
  */
 qx.Class.define("sidooqoo.PuzzleCellControl",{
     extend: qx.ui.form.TextField,
-    statics: {
-        cellValueStates: {
-            EMPTY: 0,
-            FIXED: 1,
-            ENTERED: 2,
-            SUGGESTED: 4,
-            SOLVED: 8
-        }
-    },
     properties: {
-        cellIndex : { check : "Number" },        
-        puzzleQueries: {},
-        _valueState: { check: "Number" }
-        
-       
+        _cellData : {}       
     },
-    members: {
-        getDataRow() {
-            return 0 | this.getCellIndex() / 9;
-        },
-        getDataCol() {
-            return this.getCellIndex() % 9;
-        },
-        getInnerCellIndex() {
-            let innerCellRow = 0 | this.getDataRow() / 3;
-            let innerCellColumn = 0 | this.getDataCol() / 3;
-            return (innerCellRow *3) + innerCellColumn;
-        },
-        _getValueState() {
-            return this._valueState;
-        },
-        _setValueState(state) {
-            this._valueState = state;
-        },
-        setFixed(fixed) {
-            if (fixed) {
-                this._valueState = sidooqoo.PuzzleCellControl.cellValueStates.FIXED;
-            } else {
-                this._valueState = this._valueState &! sidooqoo.PuzzleCellControl.cellValueStates.FIXED;
-            }
-        },
-        getFixed() {
-            return this._valueState == sidooqoo.PuzzleCellControl.cellValueStates.FIXED;
-        },
-        getPassIndex() {
-            return this._passIndex;
-        },
-        setPassIndex(iPassIndex) {
-            this._passIndex = iPassIndex;
-        },
-        getChoiceIndex() {
-            return this._choiceIndex;
-        },
-        setChoiceIndex(iChoiceIndex) {
-            this._choiceIndex = iChoiceIndex;
-        },    
-        getEntered() {
-            return this._valueState === sidooqoo.PuzzleCellControl.cellValueStates.ENTERED;
-        },    
-        setEntered(bEntered) {
-            if (bEntered) {
-                this._valueState = sidooqoo.PuzzleCellControl.cellValueStates.ENTERED;
-            } else if ([sidooqoo.PuzzleCellControl.cellValueStates.SOLVED, sidooqoo.PuzzleCellControl.cellValueStates.FIXED].indexOf(this._valueState) < 0) {
-                this._valueState = sidooqoo.PuzzleCellControl.cellValueStates.EMPTY;
-            }
-        },    
-        getSolved() {
-            return this._valueState === sidooqoo.PuzzleCellControl.cellValueStates.SOLVED;
-        },    
-        setSolved() {
-            this._valueState = sidooqoo.PuzzleCellControl.cellValueStates.SOLVED;
-        },    
-        getSuggested() {
-            return this._valueState === sidooqoo.PuzzleCellControl.cellValueStates.SUGGESTED;
-        },    
-        setSuggested(bSuggested) {
-            this._valueState = bSuggested ? sidooqoo.PuzzleCellControl.cellValueStates.SUGGESTED : undefined;
-        },
-        
+    members: {     
         reset(bFast) {
             this.setValue('');
-            this._valueState = sidooqoo.PuzzleCellControl.cellValueStates.EMPTY;
             if (!bFast) {
                 this.element.innerHTML = '';
                 this.element.classList.remove('suggested');
@@ -96,7 +20,7 @@ qx.Class.define("sidooqoo.PuzzleCellControl",{
         }
         
     },
-    construct() {
+    construct(oCellData) {
         super();
         this.setMinWidth(20);
         this.setMinHeight(20);
@@ -104,14 +28,13 @@ qx.Class.define("sidooqoo.PuzzleCellControl",{
         this.setMaxHeight(20);
         this.setMarginLeft(5);
         this.setMarginTop(5);  
-        this.setChoiceIndex(0);
-        this._valueState = sidooqoo.PuzzleCellControl.cellValueStates.EMPTY; 
 
+        this._cellData = oCellData;
+        oCellData.setElement(this);
+        //this.setChoiceIndex(0);
         
         this.addListener("keydown", (oEv) => {
 
-            //
-      
             // some very basic validation to prevent entering invalid digits
             let keyNumericValue = parseInt(oEv.getKeyIdentifier(),10);            
             if (isNaN(keyNumericValue) || keyNumericValue < 1 || keyNumericValue > 9) {
@@ -125,8 +48,8 @@ qx.Class.define("sidooqoo.PuzzleCellControl",{
 
             
             // Check that we can actually edit the value
-            let puzzleQueries = this.getPuzzleQueries();
-            if (!puzzleQueries.canSetCellValue(this,keyNumericValue)) {
+            let puzzleQueries = this._cellData.getPuzzleQueries();
+            if (!puzzleQueries.canSetCellValue(this._cellData,keyNumericValue)) {
                 oEv.stopPropagation();
                 oEv.preventDefault();
             }
@@ -134,29 +57,29 @@ qx.Class.define("sidooqoo.PuzzleCellControl",{
             let oCells = puzzleQueries._aCells;
 
             // Handle arrow keys to navigate between cells
-            let cellIndex = (this.getDataRow() * 9) + this.getDataCol();
+            let cellIndex = (this._cellData.getDataRow() * 9) + this._cellData.getDataCol();
             switch (event.code) {                
                 case "ArrowUp":
-                    if (this.getDataRow() > 0) {
-                        oCells[cellIndex - 9 ].focus();    
+                    if (this._cellData.getDataRow() > 0) {
+                        oCells[cellIndex - 9 ].getElement().focus();    
                     }
                     break;
 
                 case "ArrowLeft":                  
-                    if (this.getDataCol() > 0) {
-                        oCells[cellIndex - 1 ].focus();
+                    if (this._cellData.getDataCol() > 0) {
+                        oCells[cellIndex - 1 ].getElement().focus();
                     }
                     break;
 
                 case "ArrowRight":                    
-                    if (this.getDataCol() < 9) {
-                        oCells[cellIndex + 1 ].focus();    
+                    if (this._cellData.getDataCol() < 8) {
+                        oCells[cellIndex + 1 ].getElement().focus();    
                     }
                 break;
 
                 case "ArrowDown":                    
-                    if (this.getDataRow() < 9) {
-                        oCells[cellIndex + 9 ].focus();    
+                    if (this._cellData.getDataRow() < 8) {
+                        oCells[cellIndex + 9 ].getElement().focus();    
                     }
                     break;       
                 
@@ -169,9 +92,14 @@ qx.Class.define("sidooqoo.PuzzleCellControl",{
 
         this.addListener("keypress", oEv => {
            
-            let puzzleQueries = this.getPuzzleQueries();
-            if (puzzleQueries.canSetCellValue(this,oEv.getKeyIdentifier() | 0)) {
-                this.setValue(oEv.getKeyIdentifier());
+            let puzzleQueries = this._cellData.getPuzzleQueries();
+            if (puzzleQueries.canSetCellValue(this._cellData,oEv.getKeyIdentifier() | 0)) {
+                
+                let keyNumericValue = parseInt(oEv.getKeyIdentifier(),10);
+                if (isNumeric(keyNumericValue)) {
+                    this.setValue(' ' + keyNumericValue);
+                    this._cellData.setValue(keyNumericValue);
+                }
                 oEv.stopPropagation();
                 oEv.preventDefault();
             }
